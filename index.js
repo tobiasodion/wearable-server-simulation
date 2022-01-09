@@ -1,7 +1,13 @@
 const express = require('express')
-var mysql = require('mysql')
-
 const app = express()
+var mysql = require('mysql');
+const { timeout } = require('nodemon/lib/config');
+const { watchOptions } = require('nodemon/lib/config/defaults');
+var cors = require('cors')
+
+app.use(cors())
+
+
 
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -14,7 +20,7 @@ var activated = false
 var paired = false
 
 app.get('/pair', function (req, res) {
-  if(paired){
+  if (paired) {
     res.send('Device already paired')
   }
   else {
@@ -81,27 +87,13 @@ app.get('/deactivate', function (req, res) {
 })
 
 app.get('/transmit', function (req, res) {
+
   if (activated) {
-    var query = "INSERT INTO `sleep_metrics`(`id`, `time`, `date`, `temperature`, `heart_rate`, `oxygen_saturation`, `snoring_detection`, `accelerometer_data`, `pets_device_code`) VALUES (?,?,?,?,?,?,?,?,?)"
-    var wearableData = generateData(1234)
-
-    connection.query({
-      sql: query,
-      timeout: 40000, // 40s
-      values: wearableData
-    }, function (error, results, fields) {
-      if (error) {
-        console.log('unsuccessful ' + error)
-        res.send('transmission not successful. System error')
-        throw error
-      }
-
-      else {
-        console.log(results);
-        console.log('successful Device ' + wearableData[8] + wearableData);
-        res.send('data sent')
-      }
-    })
+    for (i = 0; i < 20; i++) {
+      transmitData()
+      sleep(1000)
+    }
+    res.send('data sent')
   }
 
   else {
@@ -143,11 +135,11 @@ function generateData(deviceCode) {
   var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
   var id = '';
-  var temperature = randomInt(0,100);
-  var heartRate = randomInt(0,100);
-  var oxygenSaturation = randomInt(0,100);
+  var temperature = randomInt(0, 100);
+  var heartRate = randomInt(0, 100);
+  var oxygenSaturation = randomInt(0, 100);
   var snoringDetection = randomBool();
-  var accelerometerData = randomInt(0,100);
+  var accelerometerData = randomInt(0, 100);
 
   var randomData = [id, time, date, temperature, heartRate, oxygenSaturation, snoringDetection, accelerometerData, deviceCode]
   console.log(heartRate);
@@ -175,3 +167,70 @@ function randomBool(min, max) {
   }
 }
 
+function sleep(ms) {
+  console.log('delay')
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function hello(){
+  console.log('hello')
+}
+
+function transmitData() {
+  var query
+  var wearableData
+
+  query = "INSERT INTO `sleep_metrics`(`id`, `time`, `date`, `temperature`, `heart_rate`, `oxygen_saturation`, `snoring_detection`, `accelerometer_data`, `pets_device_code`) VALUES (?,?,?,?,?,?,?,?,?)"
+  wearableData = generateData(1234)
+
+  connection.query({
+    sql: query,
+    timeout: 40000, // 40s
+    values: wearableData
+  }, function (error, results, fields) {
+    if (error) {
+      console.log('unsuccessful ' + error)
+      res.send('transmission not successful. System error')
+      throw error
+    }
+
+    else {
+      //console.log(results);
+      console.log('successful Device ' + wearableData[8] + wearableData);
+      //res.send('data sent')
+    }
+  })
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+app.get('/sleepdata', function(req, res){
+  var deviceId = req.query.id
+  query = "SELECT * from sleep_metrics where pets_device_code = ?"
+  wearableData = generateData(1234)
+
+  connection.query({
+    sql: query,
+    timeout: 40000, // 40s
+    values: deviceId
+  }, function (error, results, fields) {
+    if (error) {
+      console.log('unsuccessful ' + error)
+      res.send('transmission not successful. System error')
+      throw error
+    }
+
+    else {
+      //console.log(results);
+      console.log(results)
+      res.send(results)
+      //res.send('data sent')
+    }
+  })
+})
