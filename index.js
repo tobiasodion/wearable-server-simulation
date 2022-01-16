@@ -25,7 +25,7 @@ app.post('/pair', function (req, res) {
   var endpoint = '/pair'
   var query = "SELECT * FROM pets where device_code = ?"
   var deviceId = req.body.id
- 
+
   try {
     connection.query({
       sql: query,
@@ -38,12 +38,12 @@ app.post('/pair', function (req, res) {
   
       else {
         if (results.length === 0) {
-          console.log(timestamp() + ' ' + 'device ' + deviceId + ' ' + endpoint + ' success: ' + JSON.stringify(results))
-          res.status(200).send(results)
+          console.log(timestamp() + ' ' + 'success: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(results))
+          res.send('01')
         }
         else {
-          console.log(timestamp() + ' ' + 'device ' + deviceId + ' ' + endpoint + ' success: ' + JSON.stringify(results))
-          res.status(200).send(results)
+          console.log(timestamp() + ' ' + 'failed: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(results))
+          res.send('00')
         }
       }
     })
@@ -51,7 +51,7 @@ app.post('/pair', function (req, res) {
 
   catch{
     console.log(timestamp() + ' ' + 'failed: device ' + deviceId + ' ' + endpoint + ' error: ' + JSON.stringify(error))
-    res.status(500).send(error)
+    res.send('11')
   }
 })
 
@@ -71,8 +71,8 @@ app.post('/transmit', function (req, res) {
       }
 
       else {
-        console.log(timestamp() + ' ' + 'device ' + deviceId + ' ' + endpoint + ' success: ' + JSON.stringify(results))
-        res.status(200).send(results)
+        console.log(timestamp() + ' ' + 'success: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(results))
+        res.send(results)
       }
     })
   }
@@ -82,16 +82,11 @@ app.post('/transmit', function (req, res) {
   }
 })
 
-app.listen(3000, function (req, res) {
-  //start node server
-  console.log('app running on port 3000')
-})
-
-
 //Analytics api
-app.post('analytics/sleepdata', function (req, res) {
+/*app.get('/analytics/sleepdata', function (req, res) {
   var endpoint = 'analytics/sleepdata'
-  var deviceId = req.body.id
+  //var deviceId = req.body.id
+  var deviceId = req.query.id
   query = "SELECT * from sleep_metrics where pets_device_code = ?"
   //wearableData = generateData(1234)
 
@@ -107,10 +102,46 @@ app.post('analytics/sleepdata', function (req, res) {
     }
 
     else {
-      console.log(timestamp() + ' ' + 'device ' + deviceId + ' ' + endpoint + '  ' + results)
+      console.log(timestamp() + ' ' + 'success: device ' + deviceId + ' ' + endpoint + '  ' + results)
       res.status(200).send(results)
     }
   })
+})*/
+
+app.get('/analytics/sleepdata', function (req, res) {
+  console.log(req)
+  var endpoint = 'analytics/sleepdata'
+  //var deviceId = req.body.id
+  var deviceId = req.query.id
+  var startDate = req.query.fromdate
+  var endDate = req.query.todate
+  var startTime = req.query.fromtime
+  var endTime = req.query.totime
+
+  query = "SELECT * from sleep_metrics where pets_device_code = ? AND date BETWEEN ? AND ?"
+  //wearableData = generateData(1234)
+
+  connection.query({
+    sql: query,
+    timeout: 40000, // 40s
+    values: [deviceId, startDate, endDate]
+  }, function (error, results, fields) {
+    if (error) {
+      console.log(timestamp() + ' ' + 'failed: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(error) + ' ' + JSON.stringify(results))
+      res.status(500).send(error)
+      throw error
+    }
+
+    else {
+      console.log(timestamp() + ' ' + 'success: device ' + deviceId + ' ' + endpoint + ' ' + results)
+      res.status(200).send(results)
+    }
+  })
+})
+
+app.listen(3000, function (req, res) {
+  //start node server
+  console.log('app running on port 3000')
 })
 
 function timestamp() {
