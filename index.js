@@ -1,10 +1,15 @@
 const express = require('express')
 const cors = require('cors')
+<<<<<<< HEAD
 const mysql = require('mysql');
+=======
+var mysql = require('mysql')
+>>>>>>> 5ef97197294ed69fb9399e0fec6092d7edace5a3
 const bodyParser = require('body-parser')
 
 const app = express()
 app.use(cors())
+<<<<<<< HEAD
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -13,13 +18,24 @@ const { watchOptions } = require('nodemon/lib/config/defaults');
 const { request } = require('express');
 const res = require('express/lib/response');
 const Connection = require('mysql/lib/Connection');
+=======
+>>>>>>> 5ef97197294ed69fb9399e0fec6092d7edace5a3
 
+/* Production */
+var connection = mysql.createConnection({
+  host: 'eu-cdbr-west-02.cleardb.net',
+  user: 'b24261ecdd80d8',
+  password: '65f315b9',
+  database: 'heroku_bfbb328a96000d1'
+}); 
+
+/**Development 
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: '#####',
   database: 'sqms'
-});
+});*/
 
 app.post('/pair', function (req, res) {
   var endpoint = '/pair'
@@ -90,6 +106,7 @@ app.post('/transmit', function (req, res) {
   query = "SELECT * from sleep_metrics where pets_device_code = ?"
   //wearableData = generateData(1234)
 
+<<<<<<< HEAD
   connection.query({
     sql: query,
     timeout: 40000, // 40s
@@ -140,6 +157,10 @@ app.get('/analytics/sleepdata', function (req, res) {
 })
 
 app.listen(3000, function (req, res) {
+=======
+//process.env.PORT || 
+app.listen(process.env.PORT || 3000, function (req, res) {
+>>>>>>> 5ef97197294ed69fb9399e0fec6092d7edace5a3
   //start node server
   console.log('app running on port 3000')
 })
