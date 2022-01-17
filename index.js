@@ -4,11 +4,8 @@ const mysql = require('mysql')
 const bodyParser = require('body-parser')
 
 const app = express()
-app.use(cors(builder =>
-  builder.WithOrigins("https://wearable-device.herokuapp.com")
-  .AllowAnyHeader()
-  .AllowCredentials()
-  .AllowAnyMethod()))
+app.use(cors())
+app.options('*', cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
