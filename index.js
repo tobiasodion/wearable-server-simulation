@@ -1,7 +1,10 @@
 const express = require('express')
+const cors = require('cors')
 var mysql = require('mysql')
+const bodyParser = require('body-parser')
 
 const app = express()
+app.use(cors())
 
 /* Production */
 var connection = mysql.createConnection({
