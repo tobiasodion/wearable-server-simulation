@@ -3,21 +3,21 @@ var mysql = require('mysql')
 
 const app = express()
 
-/* Production 
+/* Production */
 var connection = mysql.createConnection({
-  host: '',
-  user: '',
-  password: '',
-  database: ''
-}); */
+  host: 'eu-cdbr-west-02.cleardb.net',
+  user: 'b24261ecdd80d8',
+  password: '65f315b9',
+  database: 'heroku_bfbb328a96000d1'
+}); 
 
-/**Development */
+/**Development 
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '#####',
   database: 'sqms'
-});
+});*/
 
 var activated = false
 var paired = false
