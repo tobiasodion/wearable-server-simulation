@@ -4,13 +4,16 @@
   "description": "sqms wearable simulation server",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tobias Odion",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.2",
-    "mysql": "^2.18.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.15"
   }
 }
