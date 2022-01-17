@@ -122,7 +122,7 @@ app.get('/transmit', function (req, res) {
 
 
 //process.env.PORT || 
-app.listen(3000, function (req, res) {
+app.listen(process.env.PORT || 3000, function (req, res) {
   //start node server
   console.log('app running on port 3000')
 
