@@ -3,7 +3,13 @@ const cors = require('cors')
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
 
+var corsOptions = {
+  origin: 'https://sqms.herokuapp.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 const app = express()
+<<<<<<< Updated upstream
 app.use(cors({
   "origin": "*",
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -11,6 +17,9 @@ app.use(cors({
   "optionsSuccessStatus": 204
 }))
 //app.options('', cors())
+=======
+app.use(cors(corsOptions))
+>>>>>>> Stashed changes
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -20,21 +29,21 @@ const { request } = require('express');
 const res = require('express/lib/response');
 const Connection = require('mysql/lib/Connection');
 
-/* Production */
+/* Production
 var connection = mysql.createConnection({
   host: 'eu-cdbr-west-02.cleardb.net',
   user: 'b24261ecdd80d8',
   password: '65f315b9',
   database: 'heroku_bfbb328a96000d1'
-}); 
+}); */
 
-/*Development 
+//Development 
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '#####',
+  password: '',
   database: 'sqms'
-});*/
+});
 
 app.post('/pair', function (req, res) {
   var endpoint = '/pair'
@@ -72,28 +81,36 @@ app.post('/pair', function (req, res) {
 
 app.post('/transmit', function (req, res) {
   var endpoint = '/transmit'
-  wearableData = req.body.data
+
+  data = req.body
+  deviceId = data.deviceId
 
   var query = "INSERT INTO `sleep_metrics`(`id`, `time`, `date`, `temperature`, `heart_rate`, `oxygen_saturation`, `snoring_detection`, `accelerometer_data`, `pets_device_code`) VALUES (?,?,?,?,?,?,?,?,?)"
   try {
     connection.query({
       sql: query,
       timeout: 40000, // 40s
-      values: wearableData
+      values: ['', data.time, data.date, data.temperature, data.heartRate, data.oxygenSaturation, data.snoringDetection, data.accelerometerData, data.deviceId]
     }, function (error, results, fields) {
       if (error) {
         throw error
       }
 
       else {
-        console.log(timestamp() + ' ' + 'success: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(results))
-        res.send(results)
+        if (results.affectedRows === 1){
+          console.log(timestamp() + ' ' + 'success: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(results))
+          res.send('00')
+        }
+        else{
+          console.log(timestamp() + ' ' + 'failed: device ' + deviceId + ' ' + endpoint + ' ' + JSON.stringify(results))
+          res.send('01')
+        }      
       }
     })
   }
   catch {
     console.log(timestamp() + ' ' + 'failed: device ' + deviceId + ' ' + endpoint + ' error: ' + JSON.stringify(error))
-    res.status(500).send(error)
+    res.send('11')
   }
 })
 
