@@ -9,17 +9,7 @@ var corsOptions = {
 }
 
 const app = express()
-<<<<<<< Updated upstream
-app.use(cors({
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204
-}))
-//app.options('', cors())
-=======
 app.use(cors(corsOptions))
->>>>>>> Stashed changes
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -29,21 +19,21 @@ const { request } = require('express');
 const res = require('express/lib/response');
 const Connection = require('mysql/lib/Connection');
 
-/* Production
+//Production
 var connection = mysql.createConnection({
   host: 'eu-cdbr-west-02.cleardb.net',
   user: 'b24261ecdd80d8',
   password: '65f315b9',
   database: 'heroku_bfbb328a96000d1'
-}); */
+}); 
 
-//Development 
+/*Development 
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'sqms'
-});
+});*/
 
 app.post('/pair', function (req, res) {
   var endpoint = '/pair'
