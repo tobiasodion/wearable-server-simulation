@@ -21,10 +21,10 @@ const Connection = require('mysql/lib/Connection');
 
 //Production
 var connection = mysql.createConnection({
-  host: 'eu-cdbr-west-02.cleardb.net',
-  user: 'b24261ecdd80d8',
-  password: '65f315b9',
-  database: 'heroku_bfbb328a96000d1'
+  host: '##########################',
+  user: '#################',
+  password: '###########',
+  database: '#############'
 }); 
 
 /*Development 
